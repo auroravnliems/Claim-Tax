@@ -1,0 +1,32 @@
+name: ClaimTax
+version: '${project.version}'
+main: dev.claimtax.ClaimTaxPlugin
+api-version: '1.20'
+description: Thu thuế claim blocks hàng tuần sử dụng Vault + GriefPrevention
+author: ClaimTax
+website: ''
+
+depend:
+  - GriefPrevention
+  - Vault
+
+softdepend:
+  - DiscordSRV
+
+commands:
+  claimtax:
+    description: Lệnh quản lý thuế claim
+    usage: /<command> [sub-command]
+    aliases: [ctx, tax]
+    permission: claimtax.admin
+
+permissions:
+  claimtax.admin:
+    description: Quyền truy cập tất cả lệnh ClaimTax
+    default: op
+  claimtax.exempt:
+    description: Miễn thuế claim
+    default: false
+  claimtax.info:
+    description: Xem thông tin thuế của bản thân
+    default: true

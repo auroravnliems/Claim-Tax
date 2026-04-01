@@ -1,0 +1,85 @@
+# ============================================================
+#   ClaimTax - Config thuế claim blocks
+# ============================================================
+
+# --- Config thuế ---
+tax:
+  # Số tiền thuế tính cho mỗi 1000 blocks (đơn vị: tiền Vault)
+  # Mặc định: 20000 mỗi 1000 blocks mỗi tuần
+  amount-per-1000-blocks: 20000.0
+
+  # Ngưỡng tối thiểu để bị thu thuế (blocks)
+  # Người chơi có DƯỚI mức này sẽ KHÔNG bị thu thuế
+  minimum-blocks: 500
+
+  # Chu kỳ thu thuế (đơn vị: ticks Minecraft, 20 ticks = 1 giây)
+  # Mặc định: 7 ngày = 604800 giây = 12096000 ticks
+  # Để test nhanh, thử 6000 ticks = 5 phút
+  interval-ticks: 12096000
+
+  # Hành động khi người chơi không đủ tiền nộp thuế
+  # WARN   - Chỉ cảnh báo, không xóa claim
+  # DELETE - Tự động xóa claim khi nợ thuế (nguy hiểm!)
+  on-debt: DELETE
+
+  # Số lần cảnh báo trước khi xóa claim (chỉ áp dụng khi on-debt: DELETE)
+  max-warnings: 3
+  # Khoang thoi gian giua moi lan canh bao (ticks, 1200 = 1 phut)
+  # Mac dinh: 6000 ticks = 5 phut
+  warning-interval-ticks: 6000
+
+# --- Cấu hình thông báo ---
+messages:
+  # Prefix hiển thị trước mọi tin nhắn
+  prefix: "&8[&6💰 ClaimTax&8] "
+
+  # Thông báo thu thuế thành công
+  tax-collected: "&aThu thuế thành công &e{amount} &acho &e{blocks} &ablocks claim."
+
+  # Thông báo không đủ tiền
+  tax-failed: "&cBạn không đủ tiền nộp thuế! Cần &e{amount}&c, hiện có &e{balance}&c. Lần cảnh báo: &e{warnings}/{max}."
+
+  # Thông báo dưới ngưỡng tối thiểu (miễn thuế)
+  tax-exempt-blocks: "&7Bạn chỉ có &e{blocks} &7blocks claim (dưới &e{min} &7blocks), &amiễn thuế tuần này."
+
+  # Thông báo miễn thuế theo quyền
+  tax-exempt-perm: "&7Bạn được &amiễn thuế &7do quyền đặc biệt."
+
+  # Thông báo claim bị xóa do nợ thuế
+  claim-deleted: "&cClaim của bạn tại &e{location} &cđã bị xóa do nợ &e{amount} &ctiền thuế!"
+
+# --- Cấu hình log ---
+logging:
+  # Ghi log vào file khi thu thuế
+  enabled: true
+
+  # File log (tương đối với thư mục plugin)
+  file: "tax_log.txt"
+
+  # Log mỗi lần thu thuế từng người chơi
+  log-per-player: true
+
+# --- Cấu hình nâng cao ---
+advanced:
+  # Tính thuế dựa trên tổng blocks đã claim (bao gồm sub-claims)
+  # true  = tính TẤT CẢ blocks (chính + sub), ngăn gian lận
+  # false = chỉ tính claim chính
+  count-sub-claims: true
+
+  # Hiển thị chi tiết từng claim khi thông báo
+  show-claim-details: false
+
+  # Gửi bossbar thay vì chat khi thu thuế
+  use-bossbar: false
+
+  # Thời gian hiển thị bossbar (giây)
+  bossbar-duration: 10
+
+# --- Config Discord (can DiscordSRV) ---
+discord:
+  # Bat/tat thong bao Discord DM
+  notify-enabled: true
+
+  # Gui DM khi mien thue (duoi nguong block)
+  # false = im lang khi mien thue, tranh spam
+  notify-exempt: true
