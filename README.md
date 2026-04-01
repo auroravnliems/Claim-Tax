@@ -17,33 +17,6 @@ Plugin thu thuế claim blocks hàng tuần cho Minecraft, tích hợp **GriefPr
 
 ---
 
-## ⚙️ Cài đặt
-
-```bash
-# 1. Build plugin
-mvn clean package
-
-# 2. Copy JAR vào server
-cp target/ClaimTax-1.0.0.jar plugins/
-
-# 3. Khởi động server → config.yml tự sinh ra tại:
-#    plugins/ClaimTax/config.yml
-
-# 4. Chỉnh config theo ý muốn rồi /claimtax reload
-```
-
----
-
-## 🗂️ Cấu trúc file
-
-```
-plugins/ClaimTax/
-├── config.yml       ← Cấu hình chính
-├── tax_data.yml     ← Lịch sử thuế từng người chơi (tự sinh)
-└── tax_log.txt      ← Log giao dịch thuế (tự sinh)
-```
-
----
 
 ## ⚙️ config.yml
 
@@ -101,34 +74,6 @@ Thuế = (Tổng blocks / 1000) × amount-per-1000-blocks
 Ví dụ:
   5000 blocks × 20,000 / 1000 = 100,000 coins / tuần
   500  blocks               → Miễn thuế (dưới ngưỡng)
-```
-
----
-
-## 🔄 Flow hoạt động
-
-```
-Mỗi tuần: TaxScheduler chạy
-    │
-    ├── Đủ tiền  → Thu thuế qua Vault ✅
-    │              → Thông báo chat + Discord DM
-    │
-    └── Thiếu tiền → Đưa vào DebtTracker
-                    → Thông báo chat + Discord DM
-                    │
-                    └── WarningScheduler (mỗi 5 phút)
-                            │
-                            ├── Đã có đủ tiền → Thu tự động ✅
-                            │
-                            ├── Vẫn thiếu → Cảnh báo [1/3]
-                            │              → Discord DM
-                            │
-                            ├── Vẫn thiếu → Cảnh báo [2/3]
-                            │
-                            └── Vẫn thiếu → Cảnh báo [3/3]
-                                           → XÓA TOÀN BỘ CLAIM ❌
-                                           → Broadcast toàn server
-                                           → Discord DM
 ```
 
 ---
@@ -202,61 +147,3 @@ tax:
 Sau đó dùng `/claimtax run` để thu thuế thủ công ngay.
 
 ---
-
-## 📦 Phụ thuộc Maven
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>org.spigotmc</groupId>
-        <artifactId>spigot-api</artifactId>
-        <version>1.20.4-R0.1-SNAPSHOT</version>
-        <scope>provided</scope>
-    </dependency>
-    <dependency>
-        <groupId>net.milkbowl.vault</groupId>
-        <artifactId>VaultAPI</artifactId>
-        <version>1.7</version>
-        <scope>provided</scope>
-    </dependency>
-    <dependency>
-        <groupId>com.github.TechFortress</groupId>
-        <artifactId>GriefPrevention</artifactId>
-        <version>16.18.2</version>
-        <scope>provided</scope>
-    </dependency>
-    <!-- Tùy chọn -->
-    <dependency>
-        <groupId>com.github.DiscordSRV</groupId>
-        <artifactId>DiscordSRV</artifactId>
-        <version>1.27.0</version>
-        <scope>provided</scope>
-    </dependency>
-</dependencies>
-```
-
----
-
-## 📁 Cấu trúc source
-
-```
-src/main/java/dev/claimtax/
-├── ClaimTaxPlugin.java              ← Main class
-├── command/
-│   └── TaxCommand.java             ← Lệnh /claimtax
-├── data/
-│   ├── DebtTracker.java            ← Theo dõi người chơi đang nợ thuế
-│   ├── TaxDataStore.java           ← Lưu/tải tax_data.yml
-│   └── TaxRecord.java              ← Model dữ liệu thuế
-├── discord/
-│   └── DiscordNotifier.java        ← Gửi DM qua DiscordSRV
-├── manager/
-│   ├── ClaimAnalyzer.java          ← Phân tích claim (anti-fraud)
-│   └── TaxManager.java             ← Engine thu thuế
-├── task/
-│   ├── TaxScheduler.java           ← Lịch thu thuế hàng tuần
-│   └── WarningScheduler.java       ← Lịch cảnh báo mỗi 5 phút
-└── util/
-    ├── TaxConfig.java              ← Đọc config.yml
-    └── TaxLogger.java              ← Ghi log ra file
-```
